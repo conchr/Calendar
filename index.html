@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Αρχαιολογική Συλλογή Φαρσάλων - Ημερολόγιο</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+        
+        /* Στυλ Σελίδας Σύνδεσης */
+        #login-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+        
+        .login-form {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-form h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .login-form button:hover {
+            background-color: #45a049;
+        }
+        
+        /* Στυλ Σελίδας Ημερολογίου */
+        #calendar-page {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            flex-wrap: wrap;
+        }
+        
+        .header h1 {
+            color: #1e3c72;
+            font-size: 24px;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .nav-buttons button {
+            padding: 8px 15px;
+            background-color: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-buttons button:hover {
+            background-color: #1e3c72;
+        }
+        
+        .month-display {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e3c72;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        /* Οριζόντιο ημερολόγιο */
+        .calendar-horizontal {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+        }
+        
+        .day-row {
+            display: flex;
+            align-items: flex-start;
+            border-bottom: 1px solid #eee;
+            padding: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .day-row.today {
+            background-color: #e8f4fd;
+        }
+        
+        .day-header {
+            min-width: 150px;
+            font-weight: bold;
+            color: #1e3c72;
+            padding-right: 15px;
+        }
+        
+        .entries-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 50px;
+        }
+        
+        .entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 4px;
+            position: relative;
+            cursor: default;
+        }
+        
+        .entry.positive {
+            color: blue;
+        }
+        
+        .entry.negative {
+            color: red;
+        }
+        
+        .entry-text {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .entry-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .entry-controls button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .evaluation {
+            display: flex;
+            gap: 10px;
+            margin-left: 10px;
+        }
+        
+        /* Κουμπιά κάτω στη σελίδα */
+        .page-footer {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background-color: white;
+        }
+        
+        .page-footer button {
+            padding: 10px 20px;
+            background-color: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .page-footer button:hover {
+            background-color: #1e3c72;
+        }
+        
+        /* Στυλ Σελίδας Χρηστών */
+        #users-page {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .users-list {
+            list-style-type: none;
+            margin: 20px 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .users-list li {
+            padding: 15px;
+            background-color: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Στυλ Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-header h2 {
+            color: #1e3c72;
+        }
+        
+        .close {
+            cursor: pointer;
+            font-size: 20px;
+        }
+        
+        .modal-body textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .modal-footer button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .cancel-btn {
+            background-color: #ddd;
+        }
+        
+        /* Media Queries για Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+                min-width: auto;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .month-display {
+                order: -1;
+                width: 100%;
+            }
+            
+            .day-header {
+                min-width: 100px;
+            }
+            
+            .entry-controls {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 18px;
+            }
+            
+            .month-display {
+                font-size: 16px;
+            }
+            
+            .day-header {
+                min-width: 80px;
+                font-size: 14px;
+            }
+            
+            .entry {
+                padding: 6px 8px;
+            }
+            
+            .nav-buttons button {
+                padding: 6px 10px;
+                font-size: 14px;
+            }
+            
+            .login-form {
+                padding: 20px;
+            }
+            
+            .page-footer {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Σελίδα Σύνδεσης -->
+    <div id="login-page">
+        <div class="login-form">
+            <h1>Αρχαιολογική Συλλογή Φαρσάλων<br>Επισκέψεις - Ραντεβού</h1>
+            <input type="text" id="username" placeholder="Μικρό όνομα χρήστη">
+            <button id="login-btn">Σύνδεση</button>
+        </div>
+    </div>
+
+    <!-- Σελίδα Ημερολογίου -->
+    <div id="calendar-page" class="container">
+        <div class="header">
+            <h1>Αρχαιολογική Συλλογή Φαρσάλων, Επισκέψεις - Ραντεβού</h1>
+            <div class="user-info">
+                <span id="current-user"></span>
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <button id="prev-month">Προηγούμενος Μήνας</button>
+            <div id="current-month-year" class="month-display"></div>
+            <button id="next-month">Επόμενος Μήνας</button>
+        </div>
+        
+        <div id="calendar-horizontal" class="calendar-horizontal">
+            <!-- Οριζόντιο ημερολόγιο θα δημιουργηθεί δυναμικά με JavaScript -->
+        </div>
+        
+        <div class="page-footer">
+            <button id="users-btn">Χρήστες</button>
+            <button id="logout-btn">Αποσύνδεση</button>
+        </div>
+    </div>
+
+    <!-- Σελίδα Χρηστών -->
+    <div id="users-page" class="container">
+        <div class="header">
+            <h1>Χρήστες</h1>
+        </div>
+        
+        <ul id="users-list" class="users-list">
+            <!-- Λίστα χρηστών θα δημιουργηθεί δυναμικά -->
+        </ul>
+        
+        <div class="page-footer">
+            <button id="back-to-calendar">Πίσω στο Ημερολόγιο</button>
+        </div>
+    </div>
+
+    <!-- Modal για προσθήκη/επεξεργασία καταχώρησης -->
+    <div id="entry-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Προσθήκη Καταχώρησης</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <textarea id="entry-text" placeholder="Πληκτρολογήστε την καταχώρησή σας εδώ..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button id="delete-entry" class="delete-btn">Διαγραφή</button>
+                <button id="cancel-entry" class="cancel-btn">Ακύρωση</button>
+                <button id="save-entry" class="save-btn">Αποθήκευση</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Στοιχεία DOM
+        const loginPage = document.getElementById('login-page');
+        const calendarPage = document.getElementById('calendar-page');
+        const usersPage = document.getElementById('users-page');
+        const usernameInput = document.getElementById('username');
+        const loginBtn = document.getElementById('login-btn');
+        const currentUserSpan = document.getElementById('current-user');
+        const usersBtn = document.getElementById('users-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const backToCalendarBtn = document.getElementById('back-to-calendar');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        const currentMonthYear = document.getElementById('current-month-year');
+        const calendarHorizontal = document.getElementById('calendar-horizontal');
+        const usersList = document.getElementById('users-list');
+        const entryModal = document.getElementById('entry-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const entryText = document.getElementById('entry-text');
+        const saveEntryBtn = document.getElementById('save-entry');
+        const cancelEntryBtn = document.getElementById('cancel-entry');
+        const deleteEntryBtn = document.getElementById('delete-entry');
+        const closeModal = document.querySelector('.close');
+
+        // Κατάσταση εφαρμογής
+        let currentUser = '';
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+        let selectedDate = null;
+        let selectedEntryId = null;
+
+        // Αρχικοποίηση εφαρμογής
+        document.addEventListener('DOMContentLoaded', function() {
+            // Έλεγχος αν υπάρχει αποθηκευμένος χρήστης
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = savedUser;
+                showCalendarPage();
+            }
+
+            // Ακροατές συμβάντων
+            loginBtn.addEventListener('click', handleLogin);
+            logoutBtn.addEventListener('click', handleLogout);
+            usersBtn.addEventListener('click', showUsersPage);
+            backToCalendarBtn.addEventListener('click', showCalendarPage);
+            prevMonthBtn.addEventListener('click', goToPreviousMonth);
+            nextMonthBtn.addEventListener('click', goToNextMonth);
+            saveEntryBtn.addEventListener('click', saveEntry);
+            cancelEntryBtn.addEventListener('click', closeEntryModal);
+            deleteEntryBtn.addEventListener('click', deleteEntry);
+            closeModal.addEventListener('click', closeEntryModal);
+            
+            // Κλείσιμο modal με κλικ έξω από αυτό
+            window.addEventListener('click', function(event) {
+                if (event.target === entryModal) {
+                    closeEntryModal();
+                }
+            });
+
+            // Enter στο login
+            usernameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleLogin();
+                }
+            });
+        });
+
+        // Χειρισμός σύνδεσης
+        function handleLogin() {
+            const username = usernameInput.value.trim();
+            if (username) {
+                currentUser = username;
+                localStorage.setItem('currentUser', currentUser);
+                showCalendarPage();
+            } else {
+                alert('Παρακαλώ εισάγετε το μικρό σας όνομα.');
+            }
+        }
+
+        // Χειρισμός αποσύνδεσης
+        function handleLogout() {
+            currentUser = '';
+            localStorage.removeItem('currentUser');
+            showLoginPage();
+        }
+
+        // Εμφάνιση σελίδας σύνδεσης
+        function showLoginPage() {
+            loginPage.style.display = 'flex';
+            calendarPage.style.display = 'none';
+            usersPage.style.display = 'none';
+            usernameInput.value = '';
+        }
+
+        // Εμφάνιση σελίδας ημερολογίου
+        function showCalendarPage() {
+            loginPage.style.display = 'none';
+            calendarPage.style.display = 'flex';
+            usersPage.style.display = 'none';
+            currentUserSpan.textContent = `Χρήστης: ${currentUser}`;
+            renderCalendar(currentMonth, currentYear);
+        }
+
+        // Εμφάνιση σελίδας χρηστών
+        function showUsersPage() {
+            loginPage.style.display = 'none';
+            calendarPage.style.display = 'none';
+            usersPage.style.display = 'flex';
+            renderUsersList();
+        }
+
+        // Πλοήγηση στον προηγούμενο μήνα
+        function goToPreviousMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar(currentMonth, currentYear);
+        }
+
+        // Πλοήγηση στον επόμενο μήνα
+        function goToNextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar(currentMonth, currentYear);
+        }
+
+        // Απόδοση οριζόντιου ημερολογίου
+        function renderCalendar(month, year) {
+            // Ενημέρωση τίτλου μήνα
+            const monthNames = [
+                'Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος',
+                'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'
+            ];
+            currentMonthYear.textContent = `${monthNames[month]} ${year}`;
+
+            // Καθαρισμός ημερολογίου
+            calendarHorizontal.innerHTML = '';
+
+            // Υπολογισμός πρώτης και τελευταίας ημέρας του μήνα
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+
+            // Προσθήκη ημερών του μήνα
+            const today = new Date();
+            const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayRow = document.createElement('div');
+                dayRow.className = 'day-row';
+                
+                // Επισημείωση της σημερινής ημέρας
+                if (isCurrentMonth && day === today.getDate()) {
+                    dayRow.classList.add('today');
+                }
+
+                // Κεφαλίδα ημέρας
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'day-header';
+                
+                const dayNames = ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'];
+                const date = new Date(year, month, day);
+                const dayName = dayNames[date.getDay()];
+                
+                dayHeader.textContent = `${day} ${dayName}`;
+                dayRow.appendChild(dayHeader);
+
+                // Περιέκτης καταχωρήσεων
+                const entriesContainer = document.createElement('div');
+                entriesContainer.className = 'entries-container';
+
+                // Λήψη καταχωρήσεων για αυτή την ημερομηνία
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const entries = getEntriesForDate(dateKey);
+
+                // Προσθήκη καταχωρήσεων
+                entries.forEach(entry => {
+                    const entryElement = createEntryElement(entry, dateKey);
+                    entriesContainer.appendChild(entryElement);
+                });
+
+                // Προσθήκη event listener για κλικ στον κενό χώρο
+                entriesContainer.addEventListener('click', function(e) {
+                    // Αν το κλικ έγινε απευθείας στο container (όχι σε entry)
+                    if (e.target === entriesContainer) {
+                        openEntryModal(dateKey);
+                    }
+                });
+
+                dayRow.appendChild(entriesContainer);
+                calendarHorizontal.appendChild(dayRow);
+            }
+        }
+
+        // Δημιουργία στοιχείου καταχώρησης
+        function createEntryElement(entry, dateKey) {
+            const entryElement = document.createElement('div');
+            entryElement.className = 'entry';
+            entryElement.dataset.id = entry.id;
+            
+            // Εφαρμογή χρώματος βάσει αξιολόγησης
+            if (entry.status === 'positive') {
+                entryElement.classList.add('positive');
+            } else if (entry.status === 'negative') {
+                entryElement.classList.add('negative');
+            }
+
+            // Κείμενο καταχώρησης
+            const entryText = document.createElement('div');
+            entryText.className = 'entry-text';
+            entryText.textContent = entry.text;
+            entryElement.appendChild(entryText);
+
+            // Περιέκτης ελέγχων καταχώρησης
+            const entryControls = document.createElement('div');
+            entryControls.className = 'entry-controls';
+
+            // Αξιολόγηση για σημερινές καταχωρήσεις - μόνο αν δεν έχει οριστεί status
+            const today = new Date();
+            const entryDate = new Date(dateKey);
+            if (isSameDay(today, entryDate) && !entry.status) {
+                const evaluationDiv = document.createElement('div');
+                evaluationDiv.className = 'evaluation';
+                
+                const positiveLabel = document.createElement('label');
+                positiveLabel.textContent = '+';
+                const positiveInput = document.createElement('input');
+                positiveInput.type = 'checkbox';
+                positiveInput.addEventListener('change', () => {
+                    updateEntryStatus(entry.id, 'positive');
+                });
+                positiveLabel.appendChild(positiveInput);
+                
+                const negativeLabel = document.createElement('label');
+                negativeLabel.textContent = '-';
+                const negativeInput = document.createElement('input');
+                negativeInput.type = 'checkbox';
+                negativeInput.addEventListener('change', () => {
+                    updateEntryStatus(entry.id, 'negative');
+                });
+                negativeLabel.appendChild(negativeInput);
+                
+                evaluationDiv.appendChild(positiveLabel);
+                evaluationDiv.appendChild(negativeLabel);
+                entryControls.appendChild(evaluationDiv);
+            }
+
+            // Στοιχεία ελέγχου (επεξεργασία, διαγραφή)
+            const editBtn = document.createElement('button');
+            editBtn.textContent = '✏️';
+            editBtn.title = 'Επεξεργασία';
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openEntryModal(dateKey, entry.id);
+            });
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = '❌';
+            deleteBtn.title = 'Διαγραφή';
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteEntryById(entry.id);
+            });
+            
+            entryControls.appendChild(editBtn);
+            entryControls.appendChild(deleteBtn);
+            entryElement.appendChild(entryControls);
+
+            return entryElement;
+        }
+
+        // Άνοιγμα modal για καταχώρηση
+        function openEntryModal(date, entryId = null) {
+            selectedDate = date;
+            selectedEntryId = entryId;
+            
+            if (entryId) {
+                // Επεξεργασία υπάρχουσας καταχώρησης
+                modalTitle.textContent = 'Επεξεργασία Καταχώρησης';
+                const entry = getEntryById(entryId);
+                entryText.value = entry.text;
+                deleteEntryBtn.style.display = 'block';
+            } else {
+                // Νέα καταχώρηση
+                modalTitle.textContent = 'Προσθήκη Καταχώρησης';
+                entryText.value = '';
+                deleteEntryBtn.style.display = 'none';
+            }
+            
+            entryModal.style.display = 'flex';
+            entryText.focus();
+        }
+
+        // Κλείσιμο modal καταχώρησης
+        function closeEntryModal() {
+            entryModal.style.display = 'none';
+            selectedDate = null;
+            selectedEntryId = null;
+        }
+
+        // Αποθήκευση καταχώρησης
+        function saveEntry() {
+            const text = entryText.value.trim();
+            if (!text) {
+                alert('Παρακαλώ εισάγετε κείμενο για την καταχώρηση.');
+                return;
+            }
+
+            if (selectedEntryId) {
+                // Ενημέρωση υπάρχουσας καταχώρησης
+                updateEntry(selectedEntryId, text);
+            } else {
+                // Δημιουργία νέας καταχώρησης
+                createEntry(selectedDate, text);
+            }
+            
+            closeEntryModal();
+            renderCalendar(currentMonth, currentYear);
+        }
+
+        // Διαγραφή καταχώρησης
+        function deleteEntry() {
+            if (selectedEntryId && confirm('Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την καταχώρηση;')) {
+                deleteEntryById(selectedEntryId);
+                closeEntryModal();
+                renderCalendar(currentMonth, currentYear);
+            }
+        }
+
+        // Απόδοση λίστας χρηστών
+        function renderUsersList() {
+            usersList.innerHTML = '';
+            const users = getAllUsers();
+            
+            if (users.length === 0) {
+                const noUsers = document.createElement('li');
+                noUsers.textContent = 'Δεν υπάρχουν καταχωρημένοι χρήστες.';
+                usersList.appendChild(noUsers);
+                return;
+            }
+            
+            users.forEach(user => {
+                const userItem = document.createElement('li');
+                userItem.textContent = user;
+                usersList.appendChild(userItem);
+            });
+        }
+
+        // Βοηθητικές συναρτήσεις για διαχείριση δεδομένων
+        function getEntriesForDate(date) {
+            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            return entries.filter(entry => entry.date === date);
+        }
+
+        function getEntryById(id) {
+            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            return entries.find(entry => entry.id === id);
+        }
+
+        function createEntry(date, text) {
+            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            const newEntry = {
+                id: Date.now().toString(),
+                date,
+                text,
+                user: currentUser,
+                status: null
+            };
+            entries.push(newEntry);
+            localStorage.setItem('calendarEntries', JSON.stringify(entries));
+        }
+
+        function updateEntry(id, text) {
+            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            const entryIndex = entries.findIndex(entry => entry.id === id);
+            if (entryIndex !== -1) {
+                entries[entryIndex].text = text;
+                localStorage.setItem('calendarEntries', JSON.stringify(entries));
+            }
+        }
+
+        function updateEntryStatus(id, status) {
+            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            const entryIndex = entries.findIndex(entry => entry.id === id);
+            if (entryIndex !== -1) {
+                entries[entryIndex].status = status;
+                localStorage.setItem('calendarEntries', JSON.stringify(entries));
+                renderCalendar(currentMonth, currentYear);
+            }
+        }
+
+        function deleteEntryById(id) {
+            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            const filteredEntries = entries.filter(entry => entry.id !== id);
+            localStorage.setItem('calendarEntries', JSON.stringify(filteredEntries));
+        }
+
+        function getAllUsers() {
+            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            const users = [...new Set(entries.map(entry => entry.user))];
+            return users;
+        }
+
+        function isSameDay(date1, date2) {
+            return date1.getFullYear() === date2.getFullYear() &&
+                   date1.getMonth() === date2.getMonth() &&
+                   date1.getDate() === date2.getDate();
+        }
+    </script>
+</body>
+</html>
