@@ -12,16 +12,35 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
+        :root {
+            --primary-color: #2c5aa0;
+            --primary-light: #4a7bc8;
+            --primary-dark: #1a3a6e;
+            --secondary-color: #d4a574;
+            --secondary-light: #e6c9a8;
+            --accent-color: #8B4513;
+            --text-color: #333333;
+            --light-color: #f8f9fa;
+            --light-gray: #e9ecef;
+            --medium-gray: #ced4da;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --today-color: #e3f2fd;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --border-radius: 8px;
+        }
+        
         body {
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: #f5f7fa;
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            line-height: 1.6;
         }
         
         .container {
-            max-width: 1200px;
+            width: 100%;
             margin: 0 auto;
             padding: 20px;
             flex: 1;
@@ -34,73 +53,114 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
             color: white;
+            padding: 20px;
         }
         
         .login-form {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 40px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             width: 100%;
             max-width: 400px;
+            color: var(--text-color);
         }
         
         .login-form h1 {
             text-align: center;
             margin-bottom: 30px;
             font-size: 24px;
+            color: var(--primary-color);
         }
         
         .login-form input {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             margin-bottom: 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            background-color: white;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.2);
         }
         
         .login-form button {
             width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
+            padding: 14px;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             font-size: 16px;
+            font-weight: 600;
             transition: background-color 0.3s;
         }
         
         .login-form button:hover {
-            background-color: #45a049;
+            background-color: var(--primary-dark);
         }
         
         /* Στυλ Σελίδας Ημερολογίου */
         #calendar-page {
             display: none;
             flex-direction: column;
-            height: 100vh;
+            min-height: 100vh;
         }
         
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+            padding: 15px 0;
             flex-wrap: wrap;
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
         }
         
         .header h1 {
-            color: #1e3c72;
-            font-size: 24px;
+            color: var(--primary-color);
+            font-size: 26px;
             flex: 1;
             min-width: 300px;
+            font-weight: 700;
+        }
+        
+        .location-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .location-button {
+            padding: 10px 20px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+        
+        .location-button:hover {
+            background-color: #6b310a;
         }
         
         .nav-buttons {
@@ -110,91 +170,137 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
             gap: 10px;
+            padding: 15px 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
         }
         
         .nav-buttons button {
-            padding: 8px 15px;
-            background-color: #2a5298;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             transition: background-color 0.3s;
+            font-weight: 600;
         }
         
         .nav-buttons button:hover {
-            background-color: #1e3c72;
+            background-color: var(--primary-dark);
         }
         
         .month-display {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
-            color: #1e3c72;
+            color: var(--primary-color);
             text-align: center;
             flex: 1;
             min-width: 200px;
         }
         
-        /* Οριζόντιο ημερολόγιο */
+        /* Οριζόντιο ημερολόγιο με τρεις στήλες */
         .calendar-horizontal {
             flex: 1;
             overflow-y: auto;
             margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             background-color: white;
+            display: grid;
+            grid-template-columns: 100px 150px 1fr;
+            box-shadow: var(--shadow);
+            width: 100%;
+        }
+        
+        .calendar-header {
+            display: contents;
+        }
+        
+        .calendar-header > div {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 16px 15px;
+            font-weight: bold;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 16px;
         }
         
         .day-row {
+            display: contents;
+        }
+        
+        .day-row.today .day-date,
+        .day-row.today .day-name,
+        .day-row.today .day-entries {
+            background-color: var(--today-color);
+        }
+        
+        .day-date, .day-name, .day-entries {
+            padding: 15px;
+            border-bottom: 1px solid var(--light-gray);
             display: flex;
             align-items: flex-start;
-            border-bottom: 1px solid #eee;
-            padding: 10px;
-            position: relative;
-            cursor: pointer;
+            transition: background-color 0.2s;
         }
         
-        .day-row.today {
-            background-color: #e8f4fd;
-        }
-        
-        .day-header {
-            min-width: 150px;
+        .day-date {
             font-weight: bold;
-            color: #1e3c72;
-            padding-right: 15px;
+            color: var(--primary-color);
+            justify-content: center;
+            font-size: 18px;
         }
         
-        .entries-container {
-            flex: 1;
-            display: flex;
+        .day-name {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        .day-entries {
             flex-direction: column;
             gap: 10px;
-            min-height: 50px;
+            cursor: pointer;
+            min-height: 70px;
+        }
+        
+        .day-entries:hover {
+            background-color: rgba(0,0,0,0.02);
         }
         
         .entry {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #f0f0f0;
-            padding: 8px 12px;
-            border-radius: 4px;
+            background-color: var(--light-gray);
+            padding: 12px 15px;
+            border-radius: 6px;
             position: relative;
             cursor: default;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .entry:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         .entry.positive {
-            color: blue;
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
         }
         
         .entry.negative {
-            color: red;
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
         }
         
         .entry-text {
             flex: 1;
-            margin-right: 10px;
+            margin-right: 15px;
+            font-size: 15px;
         }
         
         .entry-controls {
@@ -207,8 +313,15 @@
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 14px;
-            color: #666;
+            font-size: 16px;
+            color: var(--text-color);
+            transition: color 0.2s;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        .entry-controls button:hover {
+            background-color: rgba(0,0,0,0.05);
         }
         
         .evaluation {
@@ -217,35 +330,58 @@
             margin-left: 10px;
         }
         
+        .evaluation label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .evaluation input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
         /* Κουμπιά κάτω στη σελίδα */
         .page-footer {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            padding: 15px;
-            border-top: 1px solid #ddd;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-top: 1px solid var(--light-gray);
             background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
         }
         
         .page-footer button {
-            padding: 10px 20px;
-            background-color: #2a5298;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             transition: background-color 0.3s;
+            font-weight: 600;
         }
         
         .page-footer button:hover {
-            background-color: #1e3c72;
+            background-color: var(--primary-dark);
+        }
+        
+        .user-display {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 16px;
         }
         
         /* Στυλ Σελίδας Χρηστών */
         #users-page {
             display: none;
             flex-direction: column;
-            height: 100vh;
+            min-height: 100vh;
         }
         
         .users-list {
@@ -253,14 +389,19 @@
             margin: 20px 0;
             flex: 1;
             overflow-y: auto;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
         }
         
         .users-list li {
             padding: 15px;
-            background-color: white;
+            background-color: var(--light-color);
             margin-bottom: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary-color);
         }
         
         /* Στυλ Modal */
@@ -275,40 +416,59 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
         
         .modal-content {
             background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            width: 90%;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            width: 100%;
             max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
         }
         
         .modal-header h2 {
-            color: #1e3c72;
+            color: var(--primary-color);
+            font-size: 22px;
         }
         
         .close {
             cursor: pointer;
-            font-size: 20px;
+            font-size: 24px;
+            color: var(--text-color);
+            transition: color 0.2s;
+        }
+        
+        .close:hover {
+            color: var(--danger-color);
         }
         
         .modal-body textarea {
             width: 100%;
             height: 150px;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
             resize: vertical;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .modal-body textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.2);
         }
         
         .modal-footer {
@@ -318,24 +478,39 @@
         }
         
         .modal-footer button {
-            padding: 8px 15px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
         }
         
         .save-btn {
-            background-color: #4CAF50;
+            background-color: var(--success-color);
             color: white;
+        }
+        
+        .save-btn:hover {
+            background-color: #218838;
         }
         
         .delete-btn {
-            background-color: #f44336;
+            background-color: var(--danger-color);
             color: white;
         }
         
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        
         .cancel-btn {
-            background-color: #ddd;
+            background-color: var(--medium-gray);
+            color: var(--text-color);
+        }
+        
+        .cancel-btn:hover {
+            background-color: #b8b8b8;
         }
         
         /* Media Queries για Responsive Design */
@@ -343,16 +518,22 @@
             .header {
                 flex-direction: column;
                 text-align: center;
+                gap: 15px;
             }
             
             .header h1 {
-                font-size: 20px;
+                font-size: 22px;
                 min-width: auto;
+            }
+            
+            .location-bar {
+                flex-direction: column;
+                gap: 15px;
             }
             
             .nav-buttons {
                 flex-direction: column;
-                gap: 10px;
+                gap: 15px;
             }
             
             .month-display {
@@ -360,50 +541,74 @@
                 width: 100%;
             }
             
-            .day-header {
-                min-width: 100px;
+            .calendar-horizontal {
+                grid-template-columns: 80px 120px 1fr;
+            }
+            
+            .day-date, .day-name, .day-entries {
+                padding: 12px 10px;
             }
             
             .entry-controls {
                 flex-direction: column;
-                gap: 5px;
+                gap: 8px;
+            }
+            
+            .page-footer {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
             }
         }
         
         @media (max-width: 480px) {
             .container {
-                padding: 10px;
+                padding: 15px;
             }
             
             .header h1 {
-                font-size: 18px;
+                font-size: 20px;
             }
             
             .month-display {
-                font-size: 16px;
+                font-size: 18px;
             }
             
-            .day-header {
-                min-width: 80px;
+            .calendar-horizontal {
+                grid-template-columns: 70px 100px 1fr;
+            }
+            
+            .calendar-header > div {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
+            
+            .day-date, .day-name, .day-entries {
+                padding: 10px 8px;
                 font-size: 14px;
             }
             
             .entry {
-                padding: 6px 8px;
+                padding: 10px 8px;
             }
             
             .nav-buttons button {
-                padding: 6px 10px;
+                padding: 8px 16px;
                 font-size: 14px;
             }
             
             .login-form {
-                padding: 20px;
+                padding: 30px 20px;
             }
             
-            .page-footer {
-                flex-direction: column;
-                gap: 10px;
+            .modal-content {
+                padding: 20px;
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .container {
+                padding: 30px;
             }
         }
     </style>
@@ -421,10 +626,11 @@
     <!-- Σελίδα Ημερολογίου -->
     <div id="calendar-page" class="container">
         <div class="header">
-            <h1>Αρχαιολογική Συλλογή Φαρσάλων, Επισκέψεις - Ραντεβού</h1>
-            <div class="user-info">
-                <span id="current-user"></span>
-            </div>
+            <h1 id="main-title">Αρχαιολογική Συλλογή Φαρσάλων, Επισκέψεις - Ραντεβού</h1>
+        </div>
+        
+        <div class="location-bar">
+            <button id="pyrgos-btn" class="location-button">Πύργος Καραμίχου</button>
         </div>
         
         <div class="nav-buttons">
@@ -438,8 +644,11 @@
         </div>
         
         <div class="page-footer">
-            <button id="users-btn">Χρήστες</button>
-            <button id="logout-btn">Αποσύνδεση</button>
+            <div>
+                <button id="users-btn">Χρήστες</button>
+                <button id="logout-btn">Αποσύνδεση</button>
+            </div>
+            <div id="current-user" class="user-display"></div>
         </div>
     </div>
 
@@ -499,6 +708,8 @@
         const cancelEntryBtn = document.getElementById('cancel-entry');
         const deleteEntryBtn = document.getElementById('delete-entry');
         const closeModal = document.querySelector('.close');
+        const pyrgosBtn = document.getElementById('pyrgos-btn');
+        const mainTitle = document.getElementById('main-title');
 
         // Κατάσταση εφαρμογής
         let currentUser = '';
@@ -507,6 +718,7 @@
         let currentYear = currentDate.getFullYear();
         let selectedDate = null;
         let selectedEntryId = null;
+        let currentLocation = 'farsala'; // 'farsala' ή 'pyrgos'
 
         // Αρχικοποίηση εφαρμογής
         document.addEventListener('DOMContentLoaded', function() {
@@ -528,6 +740,7 @@
             cancelEntryBtn.addEventListener('click', closeEntryModal);
             deleteEntryBtn.addEventListener('click', deleteEntry);
             closeModal.addEventListener('click', closeEntryModal);
+            pyrgosBtn.addEventListener('click', toggleLocation);
             
             // Κλείσιμο modal με κλικ έξω από αυτό
             window.addEventListener('click', function(event) {
@@ -561,6 +774,20 @@
             currentUser = '';
             localStorage.removeItem('currentUser');
             showLoginPage();
+        }
+
+        // Εναλλαγή τοποθεσίας
+        function toggleLocation() {
+            if (currentLocation === 'farsala') {
+                currentLocation = 'pyrgos';
+                pyrgosBtn.textContent = 'Φάρσαλα';
+                mainTitle.textContent = 'Πύργος Καραμίχου, Επισκέψεις - Ραντεβού';
+            } else {
+                currentLocation = 'farsala';
+                pyrgosBtn.textContent = 'Πύργος Καραμίχου';
+                mainTitle.textContent = 'Αρχαιολογική Συλλογή Φαρσάλων, Επισκέψεις - Ραντεβού';
+            }
+            renderCalendar(currentMonth, currentYear);
         }
 
         // Εμφάνιση σελίδας σύνδεσης
@@ -620,6 +847,24 @@
             // Καθαρισμός ημερολογίου
             calendarHorizontal.innerHTML = '';
 
+            // Προσθήκη κεφαλίδων
+            const headerRow = document.createElement('div');
+            headerRow.className = 'calendar-header';
+            
+            const dateHeader = document.createElement('div');
+            dateHeader.textContent = 'Ημερομηνία';
+            headerRow.appendChild(dateHeader);
+            
+            const dayHeader = document.createElement('div');
+            dayHeader.textContent = 'Ημέρα';
+            headerRow.appendChild(dayHeader);
+            
+            const entriesHeader = document.createElement('div');
+            entriesHeader.textContent = 'Καταχωρήσεις';
+            headerRow.appendChild(entriesHeader);
+            
+            calendarHorizontal.appendChild(headerRow);
+
             // Υπολογισμός πρώτης και τελευταίας ημέρας του μήνα
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
@@ -638,20 +883,26 @@
                     dayRow.classList.add('today');
                 }
 
-                // Κεφαλίδα ημέρας
-                const dayHeader = document.createElement('div');
-                dayHeader.className = 'day-header';
+                // Στήλη Ημερομηνία
+                const dayDate = document.createElement('div');
+                dayDate.className = 'day-date';
+                dayDate.textContent = day;
+                dayRow.appendChild(dayDate);
+
+                // Στήλη Ημέρα
+                const dayNameElem = document.createElement('div');
+                dayNameElem.className = 'day-name';
                 
                 const dayNames = ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'];
                 const date = new Date(year, month, day);
                 const dayName = dayNames[date.getDay()];
                 
-                dayHeader.textContent = `${day} ${dayName}`;
-                dayRow.appendChild(dayHeader);
+                dayNameElem.textContent = dayName;
+                dayRow.appendChild(dayNameElem);
 
-                // Περιέκτης καταχωρήσεων
-                const entriesContainer = document.createElement('div');
-                entriesContainer.className = 'entries-container';
+                // Στήλη Καταχωρήσεις
+                const dayEntries = document.createElement('div');
+                dayEntries.className = 'day-entries';
 
                 // Λήψη καταχωρήσεων για αυτή την ημερομηνία
                 const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -660,18 +911,18 @@
                 // Προσθήκη καταχωρήσεων
                 entries.forEach(entry => {
                     const entryElement = createEntryElement(entry, dateKey);
-                    entriesContainer.appendChild(entryElement);
+                    dayEntries.appendChild(entryElement);
                 });
 
                 // Προσθήκη event listener για κλικ στον κενό χώρο
-                entriesContainer.addEventListener('click', function(e) {
+                dayEntries.addEventListener('click', function(e) {
                     // Αν το κλικ έγινε απευθείας στο container (όχι σε entry)
-                    if (e.target === entriesContainer) {
+                    if (e.target === dayEntries) {
                         openEntryModal(dateKey);
                     }
                 });
 
-                dayRow.appendChild(entriesContainer);
+                dayRow.appendChild(dayEntries);
                 calendarHorizontal.appendChild(dayRow);
             }
         }
@@ -832,17 +1083,17 @@
 
         // Βοηθητικές συναρτήσεις για διαχείριση δεδομένων
         function getEntriesForDate(date) {
-            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            const entries = JSON.parse(localStorage.getItem(`calendarEntries_${currentLocation}`) || '[]');
             return entries.filter(entry => entry.date === date);
         }
 
         function getEntryById(id) {
-            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            const entries = JSON.parse(localStorage.getItem(`calendarEntries_${currentLocation}`) || '[]');
             return entries.find(entry => entry.id === id);
         }
 
         function createEntry(date, text) {
-            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            const entries = JSON.parse(localStorage.getItem(`calendarEntries_${currentLocation}`) || '[]');
             const newEntry = {
                 id: Date.now().toString(),
                 date,
@@ -851,37 +1102,39 @@
                 status: null
             };
             entries.push(newEntry);
-            localStorage.setItem('calendarEntries', JSON.stringify(entries));
+            localStorage.setItem(`calendarEntries_${currentLocation}`, JSON.stringify(entries));
         }
 
         function updateEntry(id, text) {
-            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            const entries = JSON.parse(localStorage.getItem(`calendarEntries_${currentLocation}`) || '[]');
             const entryIndex = entries.findIndex(entry => entry.id === id);
             if (entryIndex !== -1) {
                 entries[entryIndex].text = text;
-                localStorage.setItem('calendarEntries', JSON.stringify(entries));
+                localStorage.setItem(`calendarEntries_${currentLocation}`, JSON.stringify(entries));
             }
         }
 
         function updateEntryStatus(id, status) {
-            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            const entries = JSON.parse(localStorage.getItem(`calendarEntries_${currentLocation}`) || '[]');
             const entryIndex = entries.findIndex(entry => entry.id === id);
             if (entryIndex !== -1) {
                 entries[entryIndex].status = status;
-                localStorage.setItem('calendarEntries', JSON.stringify(entries));
+                localStorage.setItem(`calendarEntries_${currentLocation}`, JSON.stringify(entries));
                 renderCalendar(currentMonth, currentYear);
             }
         }
 
         function deleteEntryById(id) {
-            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
+            const entries = JSON.parse(localStorage.getItem(`calendarEntries_${currentLocation}`) || '[]');
             const filteredEntries = entries.filter(entry => entry.id !== id);
-            localStorage.setItem('calendarEntries', JSON.stringify(filteredEntries));
+            localStorage.setItem(`calendarEntries_${currentLocation}`, JSON.stringify(filteredEntries));
         }
 
         function getAllUsers() {
-            const entries = JSON.parse(localStorage.getItem('calendarEntries') || '[]');
-            const users = [...new Set(entries.map(entry => entry.user))];
+            const farsalaEntries = JSON.parse(localStorage.getItem('calendarEntries_farsala') || '[]');
+            const pyrgosEntries = JSON.parse(localStorage.getItem('calendarEntries_pyrgos') || '[]');
+            const allEntries = [...farsalaEntries, ...pyrgosEntries];
+            const users = [...new Set(allEntries.map(entry => entry.user))];
             return users;
         }
 
