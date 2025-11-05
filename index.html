@@ -348,6 +348,23 @@
             font-size: 15px;
         }
         
+        .entry-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .entry-username {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .entry-time {
+            color: #888;
+        }
+        
         .entry-controls {
             display: flex;
             gap: 10px;
@@ -496,6 +513,22 @@
         
         .close:hover {
             color: var(--danger-color);
+        }
+        
+        .time-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .time-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.2);
         }
         
         .modal-body textarea {
@@ -745,6 +778,7 @@
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
+                <input type="time" id="entry-time" class="time-input" value="">
                 <textarea id="entry-text" placeholder="Πληκτρολογήστε την καταχώρησή σας εδώ..."></textarea>
             </div>
             <div class="modal-footer">
@@ -777,6 +811,7 @@
         const entryModal = document.getElementById('entry-modal');
         const modalTitle = document.getElementById('modal-title');
         const entryText = document.getElementById('entry-text');
+        const entryTime = document.getElementById('entry-time');
         const saveEntryBtn = document.getElementById('save-entry');
         const cancelEntryBtn = document.getElementById('cancel-entry');
         const deleteEntryBtn = document.getElementById('delete-entry');
@@ -1131,11 +1166,32 @@
                 entryElement.classList.add('negative');
             }
 
-            // Κείμενο καταχώρησης
-            const entryText = document.createElement('div');
-            entryText.className = 'entry-text';
-            entryText.textContent = entry.text;
-            entryElement.appendChild(entryText);
+            // Περιεχόμενο καταχώρησης
+            const entryContent = document.createElement('div');
+            entryContent.className = 'entry-text';
+            
+            // Κύριο κείμενο
+            const mainText = document.createElement('div');
+            mainText.textContent = entry.text;
+            entryContent.appendChild(mainText);
+            
+            // Πληροφορίες καταχώρησης (χρήστης και ώρα)
+            const entryInfo = document.createElement('div');
+            entryInfo.className = 'entry-info';
+            
+            const usernameSpan = document.createElement('span');
+            usernameSpan.className = 'entry-username';
+            usernameSpan.textContent = entry.username;
+            
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'entry-time';
+            timeSpan.textContent = entry.time || 'Χωρίς ώρα';
+            
+            entryInfo.appendChild(usernameSpan);
+            entryInfo.appendChild(timeSpan);
+            entryContent.appendChild(entryInfo);
+            
+            entryElement.appendChild(entryContent);
 
             // Περιέκτης ελέγχων καταχώρησης
             const entryControls = document.createElement('div');
@@ -1204,12 +1260,20 @@
                 // Επεξεργασία υπάρχουσας καταχώρησης
                 modalTitle.textContent = 'Επεξεργασία Καταχώρησης';
                 const entry = getEntryById(entryId);
-                entryText.value = entry.text;
-                deleteEntryBtn.style.display = 'block';
+                if (entry) {
+                    entryText.value = entry.text;
+                    entryTime.value = entry.time || '';
+                    deleteEntryBtn.style.display = 'block';
+                }
             } else {
                 // Νέα καταχώρηση
                 modalTitle.textContent = 'Προσθήκη Καταχώρησης';
                 entryText.value = '';
+                // Ορισμός τρέχουσας ώρας ως προεπιλογή
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                entryTime.value = `${hours}:${minutes}`;
                 deleteEntryBtn.style.display = 'none';
             }
             
@@ -1227,6 +1291,8 @@
         // Αποθήκευση καταχώρησης
         async function saveEntry() {
             const text = entryText.value.trim();
+            const time = entryTime.value;
+            
             if (!text) {
                 alert('Παρακαλώ εισάγετε κείμενο για την καταχώρηση.');
                 return;
@@ -1234,10 +1300,10 @@
 
             if (selectedEntryId) {
                 // Ενημέρωση υπάρχουσας καταχώρησης
-                await updateEntry(selectedEntryId, text);
+                await updateEntry(selectedEntryId, text, time);
             } else {
                 // Δημιουργία νέας καταχώρησης
-                await createEntry(selectedDate, text);
+                await createEntry(selectedDate, text, time);
             }
             
             closeEntryModal();
@@ -1287,7 +1353,8 @@
                     .from('entries')
                     .select('*')
                     .eq('date', date)
-                    .eq('location', currentLocation);
+                    .eq('location', currentLocation)
+                    .order('time', { ascending: true });
                 
                 if (error) throw error;
                 return data || [];
@@ -1314,7 +1381,7 @@
             }
         }
 
-        async function createEntry(date, text) {
+        async function createEntry(date, text, time) {
             try {
                 const { data, error } = await supabase
                     .from('entries')
@@ -1322,6 +1389,7 @@
                         {
                             date: date,
                             text: text,
+                            time: time,
                             username: currentUser,
                             status: null,
                             location: currentLocation
@@ -1337,11 +1405,11 @@
             }
         }
 
-        async function updateEntry(id, text) {
+        async function updateEntry(id, text, time) {
             try {
                 const { data, error } = await supabase
                     .from('entries')
-                    .update({ text: text })
+                    .update({ text: text, time: time })
                     .eq('id', id);
                 
                 if (error) throw error;
