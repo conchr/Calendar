@@ -245,74 +245,94 @@
             min-width: 200px;
         }
         
-        /* Οριζόντιο ημερολόγιο με τρεις στήλες */
+        /* Οριζόντιο ημερολόγιο με σταθερές στήλες */
         .calendar-horizontal {
             flex: 1;
             overflow-y: auto;
             margin-bottom: 20px;
             border-radius: var(--border-radius);
             background-color: white;
-            display: grid;
-            grid-template-columns: 100px 150px 1fr;
+            display: flex;
+            flex-direction: column;
             box-shadow: var(--shadow);
             width: 100%;
         }
-        
-        .calendar-header {
-            display: contents;
+
+        .calendar-header, .day-row {
+            display: flex;
+            width: 100%;
         }
-        
+
+        .calendar-header > div, .day-row > div {
+            padding: 16px 15px;
+            border-bottom: 1px solid var(--light-gray);
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+        }
+
         .calendar-header > div {
             background-color: var(--primary-color);
             color: white;
-            padding: 16px 15px;
             font-weight: bold;
             text-align: center;
+            justify-content: center;
             position: sticky;
             top: 0;
             z-index: 10;
             font-size: 16px;
+            border-bottom: 2px solid var(--primary-dark);
         }
-        
-        .day-row {
-            display: contents;
+
+        /* Πλάτη στηλών */
+        .calendar-header > div:nth-child(1),
+        .day-row > div:nth-child(1) {
+            width: 100px;
+            min-width: 100px;
+            max-width: 100px;
         }
-        
-        .day-row.today .day-date,
-        .day-row.today .day-name,
-        .day-row.today .day-entries {
+
+        .calendar-header > div:nth-child(2),
+        .day-row > div:nth-child(2) {
+            width: 150px;
+            min-width: 150px;
+            max-width: 150px;
+        }
+
+        .calendar-header > div:nth-child(3),
+        .day-row > div:nth-child(3) {
+            flex: 1;
+            min-width: 0; /* Για να λειτουργεί το flex-shrink σωστά */
+        }
+
+        /* Ειδικά στυλ για τις ημέρες */
+        .day-row.today > div {
             background-color: var(--today-color);
         }
-        
-        .day-date, .day-name, .day-entries {
-            padding: 15px;
-            border-bottom: 1px solid var(--light-gray);
-            display: flex;
-            align-items: flex-start;
-            transition: background-color 0.2s;
+
+        .day-row:hover > div {
+            background-color: rgba(0,0,0,0.02);
         }
-        
-        .day-date {
+
+        .day-row > div:nth-child(1) {
             font-weight: bold;
             color: var(--primary-color);
             justify-content: center;
             font-size: 18px;
         }
-        
-        .day-name {
+
+        .day-row > div:nth-child(2) {
             color: var(--text-color);
             font-weight: 500;
         }
-        
-        .day-entries {
+
+        .day-row > div:nth-child(3) {
             flex-direction: column;
+            align-items: stretch;
             gap: 10px;
+            padding: 15px;
             cursor: pointer;
             min-height: 70px;
-        }
-        
-        .day-entries:hover {
-            background-color: rgba(0,0,0,0.02);
         }
         
         .entry {
@@ -632,11 +652,22 @@
             }
             
             .calendar-horizontal {
-                grid-template-columns: 80px 120px 1fr;
+                min-width: 100%;
+                overflow-x: auto;
             }
             
-            .day-date, .day-name, .day-entries {
-                padding: 12px 10px;
+            .calendar-header > div:nth-child(1),
+            .day-row > div:nth-child(1) {
+                width: 80px;
+                min-width: 80px;
+                max-width: 80px;
+            }
+            
+            .calendar-header > div:nth-child(2),
+            .day-row > div:nth-child(2) {
+                width: 120px;
+                min-width: 120px;
+                max-width: 120px;
             }
             
             .entry-controls {
@@ -664,16 +695,21 @@
                 font-size: 18px;
             }
             
-            .calendar-horizontal {
-                grid-template-columns: 70px 100px 1fr;
+            .calendar-header > div:nth-child(1),
+            .day-row > div:nth-child(1) {
+                width: 70px;
+                min-width: 70px;
+                max-width: 70px;
             }
             
-            .calendar-header > div {
-                padding: 12px 8px;
-                font-size: 14px;
+            .calendar-header > div:nth-child(2),
+            .day-row > div:nth-child(2) {
+                width: 100px;
+                min-width: 100px;
+                max-width: 100px;
             }
             
-            .day-date, .day-name, .day-entries {
+            .calendar-header > div, .day-row > div {
                 padding: 10px 8px;
                 font-size: 14px;
             }
@@ -1098,7 +1134,24 @@
             // Φόρτωση δεδομένων
             loadingIndicator.style.display = 'block';
             
+            // Δημιουργία array με όλες τις ημέρες
+            const dayPromises = [];
+            
             for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                dayPromises.push({
+                    day: day,
+                    dateKey: dateKey,
+                    promise: getEntriesForDate(dateKey)
+                });
+            }
+            
+            // Περίμενουμε όλες τις αιτήσεις με τη σειρά
+            for (const dayPromise of dayPromises) {
+                const day = dayPromise.day;
+                const dateKey = dayPromise.dateKey;
+                const entries = await dayPromise.promise;
+                
                 const dayRow = document.createElement('div');
                 dayRow.className = 'day-row';
                 
@@ -1127,10 +1180,6 @@
                 // Στήλη Καταχωρήσεις
                 const dayEntries = document.createElement('div');
                 dayEntries.className = 'day-entries';
-
-                // Λήψη καταχωρήσεων για αυτή την ημερομηνία
-                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const entries = await getEntriesForDate(dateKey);
 
                 // Προσθήκη καταχωρήσεων
                 entries.forEach(entry => {
